@@ -1,2 +1,2 @@
 #!/bin/bash
-Display current directory contents in a long format
+a script that changes the working directory to the user’s home directory.
