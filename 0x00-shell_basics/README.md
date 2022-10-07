@@ -1,2 +1,2 @@
 #!/bin/bash/
-#!/bin/bash/
+delete the file betty
