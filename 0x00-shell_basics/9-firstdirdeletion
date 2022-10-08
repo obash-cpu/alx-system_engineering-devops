@@ -1,2 +1,3 @@
-#!/bin/bash/
-rm -rf /tmp/my_first_directory
+#!/bin/bash
+rm -rf /tmp/my_first_directory/
+chmod  u+x 9-firstdirdeletion
