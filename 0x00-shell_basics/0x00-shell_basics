@@ -1,4 +1,2 @@
 #!/bin/bash
-mv [[:upper:]]* /tmp/u
-0 string SCHOOL school data
-!:mime school
+\no string SCHOOL school data\n!:mime school
