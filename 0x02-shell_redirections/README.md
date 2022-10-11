@@ -1,2 +1,2 @@
 #!/bin/bash
-printing hello world
+displays confused smileyd
