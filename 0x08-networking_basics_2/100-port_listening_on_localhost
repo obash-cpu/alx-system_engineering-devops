@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-# Script that listens on port 98 on localhost.
-
-nc -l 98
+# Script that listens on port 98 on localhost
+tenet 127.0.0.2 98
