@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+Host myserver
+Hostname 54.236.24.208
+User myuser
+IdentityFile ~/.ssh/school
+PasswordAuthetication no
