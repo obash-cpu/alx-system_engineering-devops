@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 # script to install and setup nginx
-apt-get -y update
-apt-get -y upgrade
-apt-get -y install nginx
-service nginx start
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
+apt-get install -y nginx
+#listen on port 80
+sed -i 's/listen\s*80;/listen 80 default_server;/g' /etc/nginx/sites-available/default
+#reload configuration
+nginx -s reload
+#create HTML file
+echo "Hello World!" > /var/www/html/index.html
+#test configuration
+if ! curl http://localhost/ | grep -q "Hello World!";
+then;
+	echo "Veryfication failed"
+	exit 1
+fi
+
+echo "Nginx installed"
