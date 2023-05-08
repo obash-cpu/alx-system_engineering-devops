@@ -1,7 +1,39 @@
 #!/usr/bin/env bash
-#Install and setup load balancer
-sudo apt-get -y update
+#load balancer installation
+sudo apt-get update -y
 sudo apt-get install -y haproxy
-sudo sed -i "s/ENABLED=0/ENABLED=1/g" /etc/default/haproxy
-sudo sed -i '$ a\ \nfrontend http_front\n\t bind *:80\n\tmode http\n\tdefault_backend http_back\n\nbackend http_back\n\tbalance roundrobin\n\tserver 1034-web-01 54.236.24.208 check\n\tserver 1034-web-02 52.86.198.16 check' /etc/haproxy/haproxy.cfg
-sudo service haproxy start
+
+echo "ENABLED=1" >> /etc/default/haproxy
+mv /etc/haproxy/haproxy.cfg{,.original}
+touch /etc/haproxy/haproxy.cfg
+
+printf %s "global
+    log 127.0.0.1 local0 notice
+    maxconn 2000
+    user haproxy
+    group haproxy
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    option redispatch
+    timeout connect  5000
+    timeout client  10000
+    timeout server  10000
+
+listen hbnb
+    bind 0.0.0.0:80
+    mode http
+    stats enable
+    stats uri /haproxy?stats
+    balance roundrobin
+    option httpclose
+    option forwardfor
+    server 172583-web-01 100.26.220.29:80  check
+    server 172583-web-02 52.23.212.47:80 check
+" >> /etc/haproxy/haproxy.cfg
+
+service haproxy start
