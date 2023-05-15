@@ -1,35 +1,30 @@
 #!/usr/bin/env bash
-# Configure your domain zone so that the subdomain www points to your load-balancer IP (lb-01). Let’s also add other subdomains to make our life easier, and write a Bash script that will display information about subdomains.
+# script to report information about server domains
+# shellcheck disable=SC2086
+check_domain() {
+	# awk will use record seperator of space
+	# space sperated list of sub domains
+	SUBDOMAINS='www lb-01 web-01 web-02'
 
-#Requirements:
-
-#Add the subdomain www to your domain, point it to your lb-01 IP (your domain name might be configured with default subdomains, feel free to remove them)
-#Add the subdomain lb-01 to your domain, point it to your lb-01 IP
-#Add the subdomain web-01 to your domain, point it to your web-01 IP
-#Add the subdomain web-02 to your domain, point it to your web-02 IP
-#Your Bash script must accept 2 arguments:
-#domain:
-#type: string
-#what: domain name to audit
-#mandatory: yes
-#subdomain:
-#type: string
-#what: specific subdomain to audit
-#mandatory: no
-#Output: The subdomain [SUB_DOMAIN] is a [RECORD_TYPE] record and points to [DESTINATION]
-#When only the parameter domain is provided, display information for its subdomains www, lb-01, web-01 and web-02 - in this specific order
-#When passing domain and subdomain parameters, display information for the specified subdomain
-#Ignore shellcheck case SC2086
-#Must use:
-#awk
-#at least one Bash function
-# and displays it in the required format.
-
-# The get_dns_inf function retrieves the DNS information for a specified subdomain and domain,
-# and formats it for display in the required output format.
-get_dns_inf() {
-    local subdomain=$2
-    local domain=$1
-    local dns_info
-    dns_info=$(dig "${subdomain}.${domain}" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
-    echo "${subdo}
+	if [ -z "$1" ]; then
+		exit
+	fi
+	# no sub domain specified, do all
+	if [ -z "$2" ]; then
+		echo "$SUBDOMAINS" | awk -v domain="$1"\
+		'BEGIN { RS=" " }
+		{split($0,ARR," ");
+		cmd = "dig " ARR[1]"."domain " | grep -A1 \"ANSWER SECTION:\" | tail -n1";
+		system(cmd)
+		close(cmd)}' | awk\
+		'{
+		split($0, DOMS, ".");
+		print "The subdomain " DOMS[1] " is a " $4 " record and points to " $5}'
+	else
+		dig "$2.$1" | grep -A1 "ANSWER SECTION:" | tail -n1 | awk\
+		'{
+		split($0, DOMS, ".");
+		print "The subdomain " DOMS[1] " is a " $4 " record and points to " $5}'
+	fi
+}
+check_domain "$1" "$2"
