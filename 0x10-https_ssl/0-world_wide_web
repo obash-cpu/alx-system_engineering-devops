@@ -23,6 +23,8 @@
 #Must use:
 #awk
 #at least one Bash function
+# and displays it in the required format.
+
 # The get_dns_inf function retrieves the DNS information for a specified subdomain and domain,
 # and formats it for display in the required output format.
 get_dns_inf() {
@@ -30,4 +32,4 @@ get_dns_inf() {
     local domain=$1
     local dns_info
     dns_info=$(dig "${subdomain}.${domain}" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
-    echo "${subdo
+    echo "${subdo}
