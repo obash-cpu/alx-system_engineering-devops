@@ -1,13 +1,37 @@
 #!/usr/bin/python3
 
-import requests
-import sys
+"""
+Python script that, using a REST API, for a given employee ID,
+returns information about his/her TODO list progress.
+"""
 
-user = sys.argv[1]
-url = f"https://api.github.com/users/{user}"
-response = requests.get(url)
-if response.status_code == 200:
+from requests import get
+from sys import argv
+
+
+if __name__ == "__main__":
+    response = get('https://jsonplaceholder.typicode.com/todos/')
     data = response.json()
-    print(f"{data.get('id')}")
-else:
-    print('Error:', response.status_code)
+    completed = 0
+    total = 0
+    tasks = []
+    response2 = get('https://jsonplaceholder.typicode.com/users')
+    data2 = response2.json()
+
+    for i in data2:
+        if i.get('id') == int(argv[1]):
+            employee = i.get('name')
+
+    for i in data:
+        if i.get('userId') == int(argv[1]):
+            total += 1
+
+            if i.get('completed') is True:
+                completed += 1
+                tasks.append(i.get('title'))
+
+    print("Employee {} is done with tasks({}/{}):".format(employee, completed,
+                                                          total))
+
+    for i in tasks:
+        print("\t {}".format(i))
