@@ -5,20 +5,24 @@ import requests
 import sys
 
 
-def recurse(subreddit, hot_list=[]):
+def recurse(subreddit, host_list=[]):
     """Read reddit API and return top 10 hotspots """
     username = 'ledbag123'
     password = 'Reddit72'
     user_pass_dict = {'user': username, 'passwd': password, 'api_type': 'json'}
     headers = {'user-agent': '/u/ledbag123 API Python for Holberton School'}
+    payload = {"limit": "150"}
     url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
     client = requests.session()
     client.headers = headers
-    r = client.get(url, allow_redirects=False)
-    try:
+    r = client.get(url, allow_redirects=False, params=payload)
+    if r.status_code == 200:
         list_titles = r.json()['data']['children']
-        while (len(hot_list) <= len(list_titles)):
-            hot_list.append(len(hot_list + 1)['data']['title'])
-            recurse(subreddit, hot_list)
-    except:
-        return("None")
+        if (len(host_list) < len(list_titles) - 1):
+            host_list.append(list_titles[len(host_list)]['data']['title'])
+            recurse(subreddit, host_list)
+        else:
+            print(host_list)
+            return(host_list)
+    else:
+        return(None)
